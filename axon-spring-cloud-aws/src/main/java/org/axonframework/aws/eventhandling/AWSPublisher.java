@@ -86,7 +86,7 @@ public class AWSPublisher implements InitializingBean {
     }
 
     protected void send(List<? extends EventMessage<?>> events) {
-        LOGGER.info("Publishing events to {}", events.size(), publishDestination);
+        LOGGER.info("Publishing {} events to {}", events.size(), publishDestination);
         try {
             for (EventMessage event : events) {
                 Message message = messageConverter.createSQSMessage(event);
