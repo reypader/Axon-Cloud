@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.axonframework.aws;
+package org.axonframework.aws.eventhandling;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
-import org.axonframework.aws.autoconfigure.AWSPProperties;
+import org.axonframework.aws.EventPublicationFailedException;
+import org.axonframework.aws.SQSMessageConverter;
 import org.axonframework.common.Registration;
 import org.axonframework.eventhandling.EventMessage;
 import org.axonframework.messaging.SubscribableMessageSource;
@@ -33,6 +34,21 @@ import org.springframework.messaging.MessagingException;
 
 import java.util.List;
 
+
+/**
+ * EventBusTerminal implementation that uses AWS SQS or SNS to dispatch event messages. All
+ * outgoing messages are sent accordingly to the proper channel using {@code axon.aws.sqs-queue-name} or {@code axon.aws.sns-topic-name}.
+ * <p>
+ * This terminal does not dispatch Events internally, as it relies on each event processor to listen to it's own SQS queue.
+ * <p>
+ * NOTE:
+ * When publishing to an SNS topic, events will not be dispatched by {@link AWSMessageSource} to processors unless those SQS queues are subscribed to the topic.
+ * <p>
+ * Implementation based on {@code org.axonframework.amqp.eventhandling.spring.SpringAMQPPublisher}
+ *
+ * @author Allard Buijze (SpringAMQPPublisher)
+ * @author Rey Pader (Adaption to SQS)
+ */
 public class AWSPublisher implements InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AWSPublisher.class);

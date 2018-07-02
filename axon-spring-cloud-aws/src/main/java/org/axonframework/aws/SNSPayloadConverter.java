@@ -25,10 +25,15 @@ import java.util.UUID;
  * @author Rey Pader
  */
 public class SNSPayloadConverter {
-    private final ObjectMapper jsonMapper = new ObjectMapper();
+    private final ObjectMapper jsonMapper;
 
 
     public SNSPayloadConverter() {
+        this(new ObjectMapper());
+    }
+
+    public SNSPayloadConverter(ObjectMapper objectMapper) {
+        this.jsonMapper = new ObjectMapper();
     }
 
     public Message<?> convert(String payload) {

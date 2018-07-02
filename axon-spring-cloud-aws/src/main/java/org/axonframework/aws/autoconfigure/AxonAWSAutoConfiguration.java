@@ -2,7 +2,7 @@ package org.axonframework.aws.autoconfigure;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
-import org.axonframework.aws.AWSPublisher;
+import org.axonframework.aws.eventhandling.AWSPublisher;
 import org.axonframework.aws.DefaultSQSMessageConverter;
 import org.axonframework.aws.SQSMessageConverter;
 import org.axonframework.boot.autoconfig.AxonAutoConfiguration;

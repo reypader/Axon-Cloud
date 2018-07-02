@@ -16,6 +16,17 @@ import java.util.*;
 import static org.axonframework.common.DateTimeUtils.formatInstant;
 import static org.axonframework.serialization.MessageSerializer.serializePayload;
 
+/**
+ * Default implementation of the AMQPMessageConverter interface. This implementation will suffice in most cases. It
+ * passes all meta-data entries as headers (with 'axon-metadata-' prefix) to the message. Other message-specific
+ * attributes are also added as meta data. The message payload is serialized using the configured serializer and passed
+ * as the message body.
+ *
+ * Implementation based on {@code org.axonframework.amqp.eventhandling.DefaultAMQPMessageConverter}
+ *
+ * @author Allard Buijze (DefaultAMQPMessageConverter)
+ * @author Rey Pader (Adaption to SQS)
+ */
 public class DefaultSQSMessageConverter implements SQSMessageConverter {
 
     private final Serializer serializer;

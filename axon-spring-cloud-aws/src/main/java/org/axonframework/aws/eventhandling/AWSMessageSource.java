@@ -1,5 +1,6 @@
-package org.axonframework.aws;
+package org.axonframework.aws.eventhandling;
 
+import org.axonframework.aws.SQSMessageConverter;
 import org.axonframework.common.Registration;
 import org.axonframework.eventhandling.EventMessage;
 import org.axonframework.messaging.SubscribableMessageSource;
@@ -15,6 +16,20 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+/**
+ * MessageListener implementation that deserializes incoming messages and forwards them to one or more event processors.
+ * <p>
+ * AWSMessageSource must be configured to listen to an incoming message from an SQS Queue through {@link org.springframework.messaging.handler.annotation.MessageMapping} and forwards each message
+ * to all subscribed processors.
+ * <p>
+ * Note that the Processors must be subscribed before the MessageListenerContainer is started. Otherwise, messages will
+ * be consumed from the SQS Queue without any processor processing them.
+ * <p>
+ * Implementation based on {@code org.axonframework.amqp.eventhandling.spring.SpringAMQPMessageSource}
+ *
+ * @author Allard Buijze (SpringAMQPMessageSource)
+ * @author Rey Pader (Adaption to SQS)
+ */
 public class AWSMessageSource implements SubscribableMessageSource<EventMessage<?>>, MessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AWSMessageSource.class);
 
