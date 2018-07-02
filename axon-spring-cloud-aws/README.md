@@ -1,6 +1,6 @@
 Axon Spring Cloud AWS
 ====
-Heavily based on axon-amqp work done by the Axon Framework team.
+Heavily based on [axon-amqp](https://github.com/AxonFramework/AxonFramework/tree/master/amqp) work done by the Axon Framework team.
 
 This is a SpringBoot-based plugin to enable publishing and subscribing of events through AWS.
 The events are published through SNS and are consumed through SQS. It works under the assumption
@@ -22,9 +22,9 @@ axon.aws.sqs-queue-name=sample-queue
 axon.aws.sns-topic-name=sample-topic
 ```
 
-Similar to axon-amqp, you would need to create a bean `SQSMessageSource`.
+Similar to [axon-amqp](https://github.com/AxonFramework/AxonFramework/tree/master/amqp), you would need to create a bean `SQSMessageSource`.
 
-```
+```java
  @Bean
  public SQSMessageSource amqpMessageSource(SQSMessageConverter messageConverter) {
      return new SQSMessageSource(messageConverter) {
