@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-public class SQSMessageSource implements SubscribableMessageSource<EventMessage<?>>, MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SQSMessageSource.class);
+public class AWSMessageSource implements SubscribableMessageSource<EventMessage<?>>, MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AWSMessageSource.class);
 
     private final List<Consumer<List<? extends EventMessage<?>>>> eventProcessors = new CopyOnWriteArrayList<>();
     private final SQSMessageConverter messageConverter;
 
-    public SQSMessageSource(SQSMessageConverter messageConverter) {
+    public AWSMessageSource(SQSMessageConverter messageConverter) {
         this.messageConverter = messageConverter;
     }
 

@@ -17,6 +17,7 @@
 package org.axonframework.aws;
 
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQSAsync;
 import org.axonframework.aws.autoconfigure.AWSPProperties;
 import org.axonframework.common.Registration;
 import org.axonframework.eventhandling.EventMessage;
@@ -25,27 +26,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.cloud.aws.messaging.core.support.AbstractMessageChannelMessagingSendingTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessagingException;
 
 import java.util.List;
 
-public class SQSPublisher implements InitializingBean {
+public class AWSPublisher implements InitializingBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SQSPublisher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AWSPublisher.class);
 
     private final SubscribableMessageSource<EventMessage<?>> messageSource;
-    private final NotificationMessagingTemplate messagingTemplate;
+    private final AbstractMessageChannelMessagingSendingTemplate messagingTemplate;
 
     private Registration eventBusRegistration;
     private SQSMessageConverter messageConverter;
-    private AWSPProperties properties;
+    private String publishDestination;
 
-    public SQSPublisher(SubscribableMessageSource<EventMessage<?>> messageSource, AmazonSNS amazonSns, SQSMessageConverter messageConverter, AWSPProperties properties) {
+    public AWSPublisher(SubscribableMessageSource<EventMessage<?>> messageSource, AmazonSNS amazonSns, SQSMessageConverter messageConverter, String publishDestination) {
         this.messageSource = messageSource;
         this.messagingTemplate = new NotificationMessagingTemplate(amazonSns);
         this.messageConverter = messageConverter;
-        this.properties = properties;
+        this.publishDestination = publishDestination;
+    }
+
+    public AWSPublisher(SubscribableMessageSource<EventMessage<?>> messageSource, AmazonSQSAsync amazonSqs, SQSMessageConverter messageConverter, String publishDestination) {
+        this.messageSource = messageSource;
+        this.messagingTemplate = new QueueMessagingTemplate(amazonSqs);
+        this.messageConverter = messageConverter;
+        this.publishDestination = publishDestination;
     }
 
     public void start() {
@@ -60,13 +70,14 @@ public class SQSPublisher implements InitializingBean {
     }
 
     protected void send(List<? extends EventMessage<?>> events) {
-        LOGGER.info("Sending {} events to SNS topic {}", events.size(), properties.getSnsTopicName());
+        LOGGER.info("Publishing events to {}", events.size(), publishDestination);
         try {
             for (EventMessage event : events) {
                 Message message = messageConverter.createSQSMessage(event);
                 doSendMessage(message);
             }
         } catch (MessagingException e) {
+            LOGGER.error("Failed to publish message", e);
             throw new EventPublicationFailedException("Failed to dispatch Events to the Message Broker.", e);
         }
     }
@@ -74,7 +85,7 @@ public class SQSPublisher implements InitializingBean {
     protected void doSendMessage(Message amqpMessage) {
         LOGGER.info("Publishing message: {}", amqpMessage);
         LOGGER.debug("Payload: {}", amqpMessage.getPayload());
-        messagingTemplate.send(properties.getSnsTopicName(), amqpMessage);
+        messagingTemplate.send(publishDestination, amqpMessage);
     }
 
     @Override
