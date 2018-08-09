@@ -7,7 +7,7 @@ import org.springframework.messaging.MessageHeaders;
 import java.util.Optional;
 
 public interface SQSMessageConverter {
-    Message<?> createSQSMessage(EventMessage<?> eventMessage);
+    Message<byte[]> createSQSMessage(EventMessage<?> eventMessage);
 
     Optional<EventMessage<?>> readSQSMessage(byte[] messageBody, MessageHeaders headers);
 }

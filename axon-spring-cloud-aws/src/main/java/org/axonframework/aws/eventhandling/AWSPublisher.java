@@ -49,7 +49,7 @@ import java.util.List;
  * @author Allard Buijze (SpringAMQPPublisher)
  * @author Rey Pader (Adaption to SQS)
  */
-public class AWSPublisher implements InitializingBean {
+public class AWSPublisher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AWSPublisher.class);
 
@@ -104,8 +104,4 @@ public class AWSPublisher implements InitializingBean {
         messagingTemplate.send(publishDestination, amqpMessage);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-
-    }
 }

@@ -36,8 +36,8 @@ public class DefaultSQSMessageConverter implements SQSMessageConverter {
     }
 
     @Override
-    public Message<?> createSQSMessage(EventMessage<?> eventMessage) {
-        SerializedObject<String> serializedObject = serializePayload(eventMessage, serializer, String.class);
+    public Message<byte[]> createSQSMessage(EventMessage<?> eventMessage) {
+        SerializedObject<byte[]> serializedObject = serializePayload(eventMessage, serializer, byte[].class);
         Map<String, Object> headers = new HashMap<>();
         eventMessage.getMetaData().forEach((k, v) -> headers.put("axon-metadata-" + k, v));
         headers.put("axon-message-id", eventMessage.getIdentifier());

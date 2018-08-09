@@ -23,13 +23,13 @@ axon.aws.sns-topic-name=sample-topic
 axon.aws.publish-to-queue=false
 ```
 
-Similar to [axon-amqp](https://github.com/AxonFramework/AxonFramework/tree/master/amqp), you would need to create a bean `SQSMessageSource`.
+Similar to [axon-amqp](https://github.com/AxonFramework/AxonFramework/tree/master/amqp), you would need to create a bean `AWSMessageSource`.
 
 ```java
   @ConditionalOnExpression("!${axon.aws.publish-to-queue:false}")
   @Bean
-  public SQSMessageSource snsMessageSource(SQSMessageConverter messageConverter) {
-      return new SQSMessageSource(messageConverter) {
+  public AWSMessageSource snsMessageSource(SQSMessageConverter messageConverter) {
+      return new AWSMessageSource(messageConverter) {
           private SNSPayloadConverter payloadConverter = new SNSPayloadConverter();
  
           @MessageMapping("${axon.aws.sqs-queue-name}")
@@ -48,8 +48,8 @@ If you'd like to bypass publishing to SNS and push the events to an SQS queue di
 ```java
   @ConditionalOnProperty("axon.aws.publish-to-queue")
   @Bean
-  public SQSMessageSource sqsMessageSource(SQSMessageConverter messageConverter) {
-      return new SQSMessageSource(messageConverter) {
+  public AWSMessageSource AWSMessageSource(SQSMessageConverter messageConverter) {
+      return new AWSMessageSource(messageConverter) {
  
           @MessageMapping("${axon.aws.sqs-queue-name}")
           public void receive(@Payload String payload, @Headers Map<String,String> headers) {
